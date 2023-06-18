@@ -39,60 +39,98 @@ export default class Navigation extends Flashcard {
     Utils.positionToCenter(this.navigation, cardParams);
   }
 
-  renderAndPositionButtons = (): void => {
-    const labels = [this.prevBtnLabel, this.nextBtnLabel];
-    [this.prevBtn, this.nextBtn].forEach((btn, index) => {
-      btn
-        .beginFill(colors.btnColor)
-        .drawRoundedRect(0, 0, buttonParams.width, buttonParams.height, 7);
-      labels[index].anchor.set(0.5);
-      labels[index].position.set(
-        buttonParams.width / 2,
-        buttonParams.height / 2
-      );
-      btn.addChild(labels[index]);
+  private renderAndPositionButtons: NoParamsVoidFunction = (): void => {
+    const buttonData = [
+      {
+        btn: this.prevBtn,
+        label: this.prevBtnLabel,
+        position: { x: 0, y: 380 },
+      },
+      {
+        btn: this.nextBtn,
+        label: this.nextBtnLabel,
+        position: { x: 130, y: 380 },
+      },
+    ];
 
-      index === 0 ? btn.position.set(0, 380) : btn.position.set(130, 380);
+    buttonData.forEach(({ btn, label, position }) => {
+      this.renderButton(btn, label);
+      this.positionButton(btn, position);
+      this.positionButtonLabel(label);
     });
   };
 
-  onButtonHover: ButtonHover = (button: Graphics, isHovered: boolean): void => {
+  private renderButton(btn: Graphics, label: Text): void {
+    btn
+      .beginFill(colors.btnColor)
+      .drawRoundedRect(0, 0, buttonParams.width, buttonParams.height, 7);
+    btn.addChild(label);
+  }
+
+  private positionButton(
+    btn: Container,
+    position: { x: number; y: number }
+  ): void {
+    btn.position.set(position.x, position.y);
+  }
+
+  private onButtonHover: ButtonHover = (
+    button: Graphics,
+    isHovered: boolean
+  ): void => {
     button.beginFill(isHovered ? colors.btnHoverColor : colors.btnColor);
     button.drawRoundedRect(0, 0, buttonParams.width, buttonParams.height, 5);
   };
 
-  setFlashcardData = (index: number): void => {
-    const prevFlashcard = flashcards[index];
-    this.questionText.text = prevFlashcard.question;
-    this.answerText.text = prevFlashcard.answer;
-    this.questionText.alpha = 1;
-    this.answerText.alpha = 0;
-    this.isFlipped = false;
-    this.renderCard();
+  private positionButtonLabel(label: Text): void {
+    label.anchor.set(0.5);
+    label.position.set(buttonParams.width / 2, buttonParams.height / 2);
+  }
+
+  private setFlashcardData = (index: number): void => {
+    const flashcard = flashcards[index];
+    this.updateFlashcardData(flashcard);
   };
 
-  prevQuestion: NoParamsVoidFunction = (): void => {
-    const currentIndex = flashcards.findIndex(
-      (flashcard) => flashcard.question === this.questionText!.text
-    ) as number;
-    let prevIndex = currentIndex - 1;
+  private updateFlashcardData(flashcard: any): void {
+    this.setQuestionText(flashcard.question);
+    this.setAnswerText(flashcard.answer);
+    this.setCardTextVisibility(true, false);
+    this.isFlipped = false;
+    this.renderCard();
+  }
 
-    if (prevIndex < 0) {
-      prevIndex = flashcards.length - 1;
-    }
+  private setQuestionText(text: string): void {
+    this.questionText.text = text;
+  }
 
+  private setAnswerText(text: string): void {
+    this.answerText.text = text;
+  }
+
+  private setCardTextVisibility(
+    questionVisible: boolean,
+    answerVisible: boolean
+  ): void {
+    this.questionText.alpha = questionVisible ? 1 : 0;
+    this.answerText.alpha = answerVisible ? 1 : 0;
+  }
+
+  private getCurrentQuestionIndex = (): number => {
+    return flashcards.findIndex(
+      (card) => card.question === this.questionText.text
+    );
+  };
+
+  private prevQuestion: NoParamsVoidFunction = (): void => {
+    const prevIndex =
+      (this.getCurrentQuestionIndex() - 1 + flashcards.length) %
+      flashcards.length;
     this.setFlashcardData(prevIndex);
   };
 
-  nextQuestion: NoParamsVoidFunction = (): void => {
-    let currentIndex = flashcards.findIndex(
-      (flashcard) => flashcard.question === this.questionText.text
-    ) as number;
-
-    currentIndex++;
-
-    if (currentIndex >= flashcards.length) currentIndex = 0;
-
-    this.setFlashcardData(currentIndex);
+  private nextQuestion: NoParamsVoidFunction = (): void => {
+    const nextIndex = (this.getCurrentQuestionIndex() + 1) % flashcards.length;
+    this.setFlashcardData(nextIndex);
   };
 }
