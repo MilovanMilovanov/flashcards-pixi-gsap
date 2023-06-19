@@ -61,13 +61,6 @@ export default class Flashcard {
   flip: NoParamsVoidFunction = (): void => {
     const flipDuration = 1;
 
-    if (this.isFlipped) {
-      gsap.to(this.answerText, { alpha: 0, duration: flipDuration });
-      gsap.to(this.questionText, { alpha: 1, duration: flipDuration });
-    } else {
-      gsap.to(this.answerText, { alpha: 1, duration: flipDuration });
-      gsap.to(this.questionText, { alpha: 0, duration: flipDuration });
-    }
     this.card.position.set(cardParams.width / 2, cardParams.width - 75);
 
     this.card.pivot.set(cardParams.width / 2, cardParams.height / 2);
@@ -77,14 +70,21 @@ export default class Flashcard {
       x: 0,
       y: 1.2,
       onUpdate: (): void => {
-        if (this.card.scale.x == 0) this.renderCard();
+        if (this.card.scale.x == 0) {
+          if (!this.isFlipped) {
+            gsap.to(this.answerText, { alpha: 0, duration: 0 });
+            gsap.to(this.questionText, { alpha: 1, duration: 0 });
+          } else {
+            gsap.to(this.answerText, { alpha: 1, duration: 0 });
+            gsap.to(this.questionText, { alpha: 0, duration: 0 });
+          }
+          this.renderCard();
+        }
       },
       onComplete: (): void => {
         gsap.to(this.card.scale, { duration: flipDuration / 2, x: 1, y: 1 });
       },
     });
-
-    this.card.endFill();
 
     this.isFlipped = !this.isFlipped;
   };
