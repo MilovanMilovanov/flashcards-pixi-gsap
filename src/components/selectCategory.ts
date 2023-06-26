@@ -30,7 +30,7 @@ export default class SelectCategory {
         label,
         index,
         this.renderOption.bind(this),
-        this.showOptions.bind(this)
+        this.toggleDropdown.bind(this)
       );
 
       this.options.push(option);
@@ -73,7 +73,7 @@ export default class SelectCategory {
     return [option, label];
   }
 
-  showOptions: NoParamsVoidFunction = (): void => {
+  toggleDropdown: NoParamsVoidFunction = (): void => {
     this.options.forEach((option, index) => {
       if (this.isExpanded && !(index === 0)) {
         gsap.to(option, { duration: 0.1, y: 0, alpha: 0 });
