@@ -17,19 +17,19 @@ export default abstract class Utils {
     window.addEventListener("resize", setPosition);
   }
 
-  static addDropdownEventListeners(
+static addDropdownEventListeners(
     category: string,
     option: Graphics,
     label: Text,
     index: number,
     renderOption: Function,
-    showOptions: Function
+    toggleDropdown: Function
   ): void {
     if (index === 0) {
       option.on("pointerdown", () => {
         firstOption = option;
         firstOptionLabel = label;
-        showOptions();
+        toggleDropdown();
       });
     } else {
       option.on("pointerdown", () => {
@@ -37,7 +37,7 @@ export default abstract class Utils {
         firstOptionLabel.text = label.text;
         CardState.resetState();
         fetchQuestions(category);
-        showOptions();
+        toggleDropdown();
       });
     }
 
