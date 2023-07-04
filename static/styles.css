@@ -1,0 +1,78 @@
+:root {
+  --white: white;
+  --placeholder-enabled: rgb(148, 148, 148);
+  --placeholder-disabled: white;
+  --textarea-dropshadow: gold;
+  --scrollbar-thumb: goldenrod;
+  --canvas-background: blueviolet;
+}
+
+#canvas-container {
+  margin: 0;
+  background: var(--canvas-background);
+  overflow-x: hidden;
+}
+#canvas-container::-webkit-scrollbar {
+  width: 0.7rem;
+}
+#canvas-container::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0.5rem;
+}
+#canvas-container::-webkit-scrollbar-track {
+  background: none;
+}
+
+#type-answer {
+  position: absolute;
+  left: calc(50% - 257px);
+  padding: 2rem !important;
+  width: 244px;
+  height: 344px;
+  border-radius: 1rem;
+  font-size: 1rem;
+  scroll-behavior: smooth;
+  resize: none;
+  transition: ease-in-out 0.8s;
+  outline: none;
+  box-shadow: 1px 0px 7px 7px var(--textarea-dropshadow);
+}
+#type-answer:not([disabled]) {
+  background: var(--white);
+}
+#type-answer::-moz-placeholder {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: var(--placeholder-enabled);
+}
+#type-answer::placeholder {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: var(--placeholder-enabled);
+}
+#type-answer:disabled::-moz-placeholder {
+  color: var(--placeholder-disabled);
+}
+#type-answer:disabled::placeholder {
+  color: var(--placeholder-disabled);
+}
+#type-answer::-webkit-scrollbar {
+  width: 0.7rem;
+}
+#type-answer::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0.5rem;
+}
+#type-answer::-webkit-scrollbar-track {
+  background: none;
+}
+
+@media (max-width: 600px) {
+  #type-answer {
+    left: calc(50% - 118px);
+  }
+}/*# sourceMappingURL=styles.css.map */
