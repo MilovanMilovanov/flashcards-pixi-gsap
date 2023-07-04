@@ -4,25 +4,25 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
-module.exports = (env, argv) => {
+module.exports = (argv) => {
   return {
-    stats: "minimal", // Keep console output easy to read.
-    entry: "./src/index.ts", // Your program entry point
+    stats: "minimal",
+    entry: "./src/app.ts",
     mode: argv.mode === "production" ? "production" : "development",
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: "bundle.js",
+      filename: "app.bundle.js",
     },
 
     // Config for your testing server
     devServer: {
-      compress: true,
-      allowedHosts: "all",
       static: {
         directory: path.join(__dirname, "dist"),
         watch: true,
         publicPath: "/",
       },
+      allowedHosts: "all",
+      compress: true,
       client: {
         logging: "warn",
         overlay: {
@@ -38,7 +38,7 @@ module.exports = (env, argv) => {
     // Web games are bigger than pages, disable the warnings that our game is too big.
     performance: { hints: false },
 
-    devtool: argv.mode === "development" ? "eval-source-map" : undefined,
+    devtool: argv.mode === "development" ? "inline-source-map" : "source-map",
 
     optimization: {
       minimize: argv.mode === "production",
@@ -59,6 +59,19 @@ module.exports = (env, argv) => {
           test: /\.ts(x)?$/,
           loader: "ts-loader",
           exclude: /node_modules/,
+          options: {
+            transpileOnly: true,
+            compilerOptions: {
+              sourceMap: true,
+            },
+          },
+        },
+        {
+          test: /\.ejs$/,
+          loader: "ejs-loader",
+          options: {
+            esModule: false,
+          },
         },
         {
           test: /\.css$/,
@@ -72,11 +85,18 @@ module.exports = (env, argv) => {
 
     plugins: [
       new CopyPlugin({
-        patterns: [{ from: "static/" }],
+        patterns: [
+          {
+            from: "static/",
+            to: "[path][name][ext]",
+            globOptions: { ignore: ["**/*.scss"] },
+          },
+        ],
       }),
 
       new HtmlWebpackPlugin({
-        template: "src/index.ejs",
+        template: "./src/index.ejs",
+        filename: "index.html",
         hash: true,
         minify: false,
       }),

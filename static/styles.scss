@@ -1,0 +1,48 @@
+@import "./colors";
+@import "./_mixins";
+
+#canvas-container {
+  margin: 0;
+  background: var(--canvas-background);
+  overflow-x: hidden;
+  @include scrollbarStyles;
+}
+
+#type-answer {
+  position: absolute;
+  left: calc(50% - 257px);
+  padding: 2rem !important;
+  width: 244px;
+  height: 344px;
+  border-radius: 1rem;
+  font-size: 1rem;
+  scroll-behavior: smooth;
+  resize: none;
+  transition: ease-in-out 0.8s;
+  outline: none;
+  box-shadow: 1px 0px 7px 7px var(--textarea-dropshadow);
+
+  &:not([disabled]) {
+    background: var(--white);
+  }
+
+  &::placeholder {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--placeholder-enabled);
+  }
+
+  &:disabled::placeholder {
+    color: var(--placeholder-disabled);
+  }
+
+  @include scrollbarStyles;
+}
+
+@media (max-width: 600px) {
+  #type-answer {
+    left: calc(50% - 118px);
+  }
+}
